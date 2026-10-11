@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The M/K Atlas · 8 months</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Caveat:wght@500&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#f3ead6;--gold:#e8cf86;--dim:#9fb0ad;--bg:#0b1522;--panel:#f1e6cc;--brown:#3b2c1c;--serif:'Cormorant Garamond',Georgia,serif;--hand:'Caveat',cursive;--mono:'Space Mono',monospace}
+*{box-sizing:border-box;margin:0}html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--serif);overflow:hidden;-webkit-tap-highlight-color:transparent}
+#map{position:fixed;inset:0;width:100%;height:100%;touch-action:none;cursor:grab}
+.hud{position:fixed;z-index:5;font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--gold);padding:calc(14px + env(safe-area-inset-top,0px)) 16px 0}
+.hud.l{left:0}.hud.r{right:0;text-align:right}.hud b{display:block;font-family:var(--serif);font-size:24px;letter-spacing:.12em;color:var(--ink);font-weight:600}
+button{font-family:var(--mono);font-size:11px;letter-spacing:.16em;background:rgba(11,21,34,.7);color:var(--gold);border:1px solid var(--gold);padding:9px 14px;border-radius:2px;cursor:pointer}
+button:hover{background:var(--gold);color:#1a1409}
+.dock{position:fixed;bottom:calc(14px + env(safe-area-inset-bottom,0px));left:0;right:0;display:flex;justify-content:center;gap:10px;z-index:5}
+.ov{position:fixed;inset:0;z-index:20;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(6,12,20,.9)}
+.ov.on{display:flex;animation:in .7s}@keyframes in{from{opacity:0}to{opacity:1}}
+#intro{background:radial-gradient(circle at 50% 40%,#1c3350,#060c14)}.c{text-align:center;max-width:520px}
+.c h1{font-size:clamp(46px,12vw,84px);font-weight:400;letter-spacing:.14em;line-height:1}.c h1 em{color:var(--gold)}
+.c small{font-family:var(--mono);letter-spacing:.3em;font-size:10px;color:var(--gold)}.c p{margin:18px 0;color:var(--dim);font-size:19px;font-style:italic}
+#typed{min-height:70px;font-size:24px;margin:22px 0}
+.book{background:var(--panel);color:var(--brown);width:min(560px,100%);max-height:88vh;overflow:auto;padding:30px 28px 22px;border-radius:3px;box-shadow:0 30px 80px #000a,inset 0 0 70px #b79a5a55;position:relative}
+.book .k{font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:#8a6d34;display:flex;justify-content:space-between}
+.book h2{font-size:38px;font-weight:600;margin:6px 0 2px}.book h3{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:#8a6d34;margin:16px 0 6px;font-weight:400}
+.book p{font-size:21px;line-height:1.5}.book li{font-size:20px;margin:8px 0 0 20px;opacity:0;animation:in .8s forwards}
+.note{font-family:var(--hand);font-size:27px;color:#7a2e2e;transform:rotate(-2deg);margin-top:18px}
+.bub{max-width:80%;padding:8px 13px;border-radius:16px;font-size:19px;margin:7px 0;opacity:0;animation:in .6s forwards}.her{background:#fff8;border-bottom-left-radius:3px}.me{background:#3b2c1c;color:var(--panel);margin-left:auto;border-bottom-right-radius:3px}
+.pol{background:#fff;padding:8px 8px 22px;width:170px;transform:rotate(3deg);float:right;margin:0 0 8px 12px;box-shadow:0 4px 14px #0005}.pol img{width:100%;display:block}
+.nav{display:flex;justify-content:space-between;align-items:center;margin-top:20px}.nav button{background:none;color:var(--brown);border-color:var(--brown)}.nav button:hover{background:var(--brown);color:var(--panel)}
+.dots i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#3b2c1c44;margin:0 3px}.dots i.a{background:#7a2e2e}
+#letter .book{width:min(620px,100%);padding:34px 30px}#letter p{opacity:0;animation:in 1.6s forwards;margin-bottom:16px}
+.mo{display:flex;gap:6px;overflow-x:auto;padding-bottom:12px;margin-bottom:14px;border-bottom:1px solid #8a6d3466}.mo span{flex:none;font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:#8a6d34;text-align:center;width:74px}.mo span:before{content:'';display:block;width:9px;height:9px;border-radius:50%;background:#7a2e2e;margin:0 auto 5px}
+textarea{width:100%;height:110px;font:24px var(--hand);background:#fff7;border:1px dashed #8a6d34;padding:10px;color:var(--brown);margin:12px 0}
+.toast{position:fixed;left:50%;bottom:80px;transform:translate(-50%,20px);background:var(--panel);color:var(--brown);padding:12px 18px;font-family:var(--hand);font-size:24px;border-radius:3px;opacity:0;pointer-events:none;transition:.5s;z-index:30;max-width:88vw;text-align:center}.toast.on{opacity:1;transform:translate(-50%,0)}
+.pin{cursor:pointer}.pin .h{fill:#e8cf8622;stroke:var(--gold);stroke-width:1.5;animation:pu 3s infinite;transform-box:fill-box;transform-origin:center}@keyframes pu{50%{transform:scale(1.35);opacity:.3}}
+.pin .d{fill:#14202e;stroke:var(--gold);stroke-width:2}.pin.v .d{fill:var(--gold)}.pin text{font-family:var(--mono);font-size:13px;letter-spacing:.14em;fill:var(--ink);text-anchor:middle;paint-order:stroke;stroke:#0b1522;stroke-width:4}.pin .e{font-size:17px;stroke:none}
+.sp{cursor:pointer;fill:#fff;stroke:#fff4;stroke-width:9;animation:tw 2.4s infinite}@keyframes tw{50%{opacity:.25}}
+.ff{fill:#ffe9a0;animation:fl 6s infinite ease-in-out}@keyframes fl{50%{transform:translate(18px,-26px);opacity:.1}}
+#route{fill:none;stroke:var(--gold);stroke-width:4;stroke-linecap:round}.side{fill:none;stroke:#e8cf8688;stroke-width:2;stroke-dasharray:3 9}
+.q{font:italic 22px var(--serif);fill:var(--ink)}
+#vg{position:fixed;inset:0;pointer-events:none;z-index:4;background:radial-gradient(ellipse at center,transparent 50%,#02060ccc 100%)}
+#gr{position:fixed;inset:0;pointer-events:none;z-index:4;opacity:.12;mix-blend-mode:overlay;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence baseFrequency='.85' numOctaves='2'/></filter><rect width='180' height='180' filter='url(%23n)'/></svg>")}
+.hud{background:linear-gradient(#060c14cc,transparent);width:100%;padding-bottom:26px;pointer-events:none}.hud.r{width:auto;background:none}.hud.l{width:100%}
+.pin .d{fill:url(#ob)}.pin.v .d{fill:url(#og)}
+.book{background-image:radial-gradient(#8a6d3422 1px,transparent 1px),linear-gradient(115deg,#f6ecd2,#e9dcb9);background-size:13px 13px,auto;border:1px solid #b79a5a}
+.book h2{text-shadow:0 1px 0 #fff8}
+.bm{opacity:.1;animation:bm 6s infinite ease-in-out;transform-box:fill-box;transform-origin:left center}@keyframes bm{50%{opacity:.28;transform:rotate(-8deg)}}
+.lt{opacity:0;animation:lt 6s infinite}@keyframes lt{0%,90%,100%{opacity:0}92%,96%{opacity:1}94%{opacity:.2}}
+.bt{animation:bt 5s infinite ease-in-out}@keyframes bt{50%{transform:translate(8px,-5px)}}
+.cl{animation:cl 40s infinite alternate linear}@keyframes cl{to{transform:translateX(120px)}}
+#mm{position:fixed;left:14px;bottom:calc(64px + env(safe-area-inset-bottom,0px));width:128px;height:83px;border:1px solid var(--gold);background:#0b1522d9;z-index:6;cursor:pointer;overflow:hidden}
+#mm b{position:absolute;background:#58795f;border-radius:40%}#mm u{position:absolute;background:var(--gold);border-radius:50%;min-width:3px;min-height:3px}#mm i{position:absolute;border:1px solid #fff}
+.rg{font:22px var(--mono);letter-spacing:.45em;fill:#e8cf86;opacity:.5;text-anchor:middle}
+.fog{animation:fg 14s infinite alternate ease-in-out}@keyframes fg{to{transform:translateX(40px);opacity:.55}}
+.pin.w .h{stroke:#ff9aa8;fill:#ff9aa822}
+.fin{font:32px var(--hand);color:#7a2e2e;text-align:center;margin:26px 0 10px;line-height:1.3}.fin div{opacity:0;animation:in 2.2s forwards;margin:8px 0}
+/* ---- cozy popups ---- */
+button{border-radius:999px;transition:.25s}button:hover{transform:translateY(-1px)}
+.ov{background:radial-gradient(circle at 50% 35%,#4a2c1ccc,#0a0710f2);backdrop-filter:blur(5px)}
+.ov.on .book{animation:pop .8s cubic-bezier(.2,1.25,.35,1)}@keyframes pop{from{opacity:0;transform:translateY(40px) scale(.92) rotate(-1.5deg)}}
+.book{border-radius:16px;box-shadow:0 30px 80px #000a,0 0 100px #ffb86a40,inset 0 0 70px #b79a5a55}
+.toast{border-radius:14px;box-shadow:0 8px 24px #0006}
+#pc.pt{animation:pt .55s ease-out}@keyframes pt{from{opacity:0;transform:translateX(14px)}}
+.scene{position:relative;margin:16px 2px 6px;border:3px solid #fff;border-radius:11px;background:#fff;box-shadow:0 6px 16px #3b2c1c33;transform:rotate(-.7deg)}
+.scene:before{content:'';position:absolute;top:-11px;left:50%;width:70px;height:20px;margin-left:-35px;background:repeating-linear-gradient(45deg,#f2a9b8cc 0 6px,#f8d3dccc 6px 12px);transform:rotate(3deg);z-index:2}
+.scene svg{display:block;width:100%;border-radius:8px}.scene svg *{transform-box:fill-box}
+.scene.g{background:none;border:0;box-shadow:none;max-width:min(300px,60vw);margin:0 auto 6px;transform:none}.scene.g:before{display:none}
+@media(max-height:640px){.scene.g{display:none}}
+.bob{animation:bb 2.4s ease-in-out infinite}@keyframes bb{50%{transform:translateY(-2.5px)}}
+.hop{animation:hp 1.1s ease-in-out infinite}@keyframes hp{35%{transform:translateY(-7px)}}
+.sw{animation:sw 3.2s ease-in-out infinite;transform-origin:50% 100%}.swr{animation:swr 3.2s ease-in-out infinite;transform-origin:50% 100%}
+@keyframes sw{50%{transform:rotate(7deg)}}@keyframes swr{50%{transform:rotate(-7deg)}}
+.hf{fill:#e8607e;animation:hf 3.4s ease-in infinite;transform-origin:50% 50%}@keyframes hf{0%{transform:translateY(0) scale(.6);opacity:0}25%{opacity:1}100%{transform:translateY(-24px) scale(1.1);opacity:0}}
+.hr{fill:#e8607e}.tw{animation:tw 2.4s infinite}
+.wv{animation:wv .7s ease-in-out infinite alternate;transform-origin:0 100%}@keyframes wv{to{transform:rotate(-28deg)}}
+.pls{fill:none;stroke:#ff8fa3;stroke-width:1.5;animation:pl 2.6s ease-out infinite;transform-origin:50% 50%}@keyframes pl{from{transform:scale(.3);opacity:.9}to{transform:scale(1.5);opacity:0}}
+.rn{animation:rn .9s linear infinite}@keyframes rn{0%{transform:translateY(0);opacity:0}20%{opacity:.8}100%{transform:translateY(72px);opacity:0}}
+.scr{animation:sc 2s linear infinite}@keyframes sc{to{transform:translateX(-40px)}}
+.scr2{animation:s2 3.2s linear infinite}@keyframes s2{to{transform:translateX(-60px)}}
+.cd{animation:cd 10s ease-in-out infinite alternate}@keyframes cd{to{transform:translateX(24px)}}
+.fk{animation:fk 2.2s infinite}@keyframes fk{40%{opacity:.7}55%{opacity:1}75%{opacity:.8}}
+.ml{animation:ml 6s ease-in-out infinite}.mr{animation:mr 6s ease-in-out infinite}
+@keyframes ml{0%{transform:translateX(-62px)}35%,80%{transform:none}100%{transform:translateX(-62px)}}@keyframes mr{0%{transform:translateX(62px)}35%,80%{transform:none}100%{transform:translateX(62px)}}
+.hh{opacity:0;animation:hx 6s infinite;transform-origin:50% 50%}@keyframes hx{0%,38%{opacity:0;transform:scale(.4)}48%,80%{opacity:1;transform:none}92%,100%{opacity:0}}
+.wk{animation:wk 7s linear infinite}@keyframes wk{0%{opacity:0}8%{opacity:1}90%{opacity:1}100%{opacity:0;transform:translateX(70px)}}
+.rot{animation:ro .7s linear infinite;transform-origin:50% 50%}@keyframes ro{to{transform:rotate(360deg)}}
+.rb{opacity:0;animation:rb 8s infinite}@keyframes rb{0%,50%{opacity:0}70%,92%{opacity:.9}100%{opacity:0}}
+.gr{animation:gw 3.5s ease-in-out infinite alternate;transform-origin:50% 100%}@keyframes gw{from{transform:scale(.6)}}
+.stm{animation:stm 2.6s ease-out infinite}@keyframes stm{from{transform:translateY(0);opacity:.7}to{transform:translateY(-12px);opacity:0}}
+.dl{animation-delay:-1.2s}
+@media(prefers-reduced-motion:reduce){.scene *{animation:none!important}.hh{opacity:1}}
+.sp text{stroke:none;font-size:17px;text-anchor:middle}.sp circle{fill:#fff3}
+.rib{background:#7a2e2e;color:#fff4dc;font:30px var(--hand);text-align:center;padding:8px 12px;border-radius:10px;margin:0 0 6px;transform:rotate(-1.2deg);box-shadow:0 4px 12px #7a2e2e55}.rib.f{font-size:23px;margin:18px 0 0;background:#e8607e;transform:rotate(.8deg)}
+</style></head><body>
+<svg id="map"></svg><div id="vg"></div>
+<div class="hud l"><b>THE M/K ATLAS</b>VALSAD ↔ GURGAON · 8 MONTHS</div>
+<div class="hud r"><span id="cnt">0</span>/14 PLACES<br><span id="spc">0</span>/14 SPARKS</div>
+<div class="dock"><button id="snd">♪ SOUND</button><button id="home">THE ROUTE</button><button id="wd">WORLD</button></div>
+<div id="intro" class="ov on"><div class="c"><small>M / K · ARCHIVE 08</small><h1>THE M/K<br><em>ATLAS</em></h1><div id="typed"></div><p>A made-up world between two real places. Every pin is something special. Look closely:) a few things are hiding.</p><button id="go">ENTER</button></div></div>
+<div id="modal" class="ov"><div class="book" id="bk"></div></div>
+<div id="done" class="ov"><div class="c"><small>ATLAS COMPLETE · 14 / 14 PLACES · 14 / 14 SPARKS</small><h1 style="font-size:clamp(38px,9vw,64px);margin:16px 0">~1,000 KM<br><em>ON PAPER</em></h1><p>Fourteen places, fourteen hidden sparks. Eight months. Somewhere along the way the distance stopped feeling like distance. One more thing is waiting for you.</p><button id="ol">OPEN THE LETTER</button></div></div>
+<div id="letter" class="ov"><div class="book"><div class="k"><span>FOR YOU · 8 MONTHS</span></div><div class="mo" id="mo"></div><div id="lb"></div><p class="note" id="sg" style="opacity:0"></p><div class="fin" id="fn"></div><div class="nav"><button id="mk">LEAVE A MARK ON THE ROAD</button><button id="lc">CLOSE</button></div></div></div>
+<div id="mark" class="ov"><div class="book"><div class="k"><span>THE ROAD AHEAD</span></div><h2>Your turn.</h2><p style="font-size:19px">The road stops here. Write what you'd put at the end of it — anything, even "I don't know".</p><textarea id="ta" placeholder="write here…"></textarea><div class="nav"><button id="pl">PLACE IT ON THE MAP</button><button id="cp">COPY &amp; SEND IT TO ME</button></div></div></div>
+<div id="stone" class="ov"><div class="book"><div class="rib">A stone for you 🪨</div><div class="scene" id="stn"></div><h2 style="font-size:30px">From the beach we haven't been to yet</h2><p>I picked this one up for you, a smooth little stone from the shore. Put it with the rest of your collection. I don't know if you can have a real one... but I hope you do</p><div class="rib f">A stone for you, since you said you take a stone from each place you visit.</div><div class="nav"><span></span><button id="sx">KEEP IT 🤍</button></div></div></div>
+<div id="mm"></div><div class="toast" id="t"></div>
+<script>
+/* ========= WRITE YOUR STORY HERE ========= */
+const INTRO=["Eight months.","Two cities. One map.","Made only for you."];
+const MONTHS=["The first hello","Late nights start","Our own language","Movie nights","The hard days","Finding the way back","Closer, somehow","Still here"];
+const P = [
+{
+  id:"b", x:220, y:735, e:"🌱", t:"Valsad",
+  r:"WEST COAST · THE BEGINNING",
+  cap:"where it all started",
+  pg:[
+    ["WHERE IT STARTED",
+     "Somewhere on this side of the map, a conversation began that would eventually mean so much to me. Back then, I had no idea what you would become to me, or how often I'd find myself smiling at my screen because of you."],
+    ["THE FIRST CONVERSATION",
+     "I didn't know I was at the beginning of something I'd want to keep coming back to. I couldn't have known how familiar your name would become, or how much one notification from you could mean. If I could visit that first conversation again, I'd probably just smile at the version of me who had no idea what was coming."]
+  ],
+  ls:[
+    "LITTLE THINGS THAT STAY",
+    [
+      "Strawberry ice cream. Somehow, that name became a little piece of us. 🍓",
+      "The little moments when something you said made me smile long after the conversation ended."
+    ]
+  ],
+  n:"this is where I first said hi. (yeah, I know it was BLR, but yk, for convenience)"
+},
+{
+  id:"be", x:330, y:838, e:"🌊", t:"The Beach",
+  r:"WEST COAST · NOT YET VISITED", side:1,
+  pg:[
+    ["THE PLAN WE STILL OWE",
+     "I love going to the beach and video-calling you, letting you see it through my eyes. There's something so poetic about it, but also a little sad. So I'm keeping it here, waiting for the day we finally get to make it real. Sometimes I wonder if it'll ever happen, but I still wish for it so, so much."],
+    ["WHAT I PICTURE",
+     "I picture us finally being in the same place, with no screen between us and no countdown until one of us has to leave. Just the sea, the wind, and you beside me. Maybe we won't say anything particularly memorable. Maybe we'll just walk around and laugh at something silly. I think I'd love that just as much."]
+  ],
+  n:"expiry date: none. 🌊"
+},
+{
+  id:"f", x:480, y:600, e:"📡", t:"The Frequency",
+  r:"THE ROUTE · SOMEWHERE BETWEEN",
+  pg:[
+    ["HOW THIS BECAME OUR LITTLE WORLD",
+     "It wasn't one grand moment that made you important to me. It was all the ordinary conversations that kept turning into longer ones, the random things we shared, and the way I'd come back to tell you something because you were the person I wanted to tell."],
+    ["WHAT MATCHING FEELS LIKE",
+     "I still find it a little strange how someone I've never met in person can feel so familiar to me. There's something about the way we talk, the way we get each other, and the little world we've made through a screen. I don't know how to explain our frequency. I just know I like the way it feels with you."]
+  ],
+  ls:[
+    "THINGS I NOTICE",
+    [
+      "The little changes in your mood, even when you don't say much.",
+      "How talking to you can make an ordinary day feel a little less ordinary."
+    ]
+  ],
+  n:"conversations: still running. 💌"
+},
+{
+  id:"c", x:700, y:640, e:"🎬", t:"Cinema District",
+  r:"THE ROUTE · SHARED STORIES",
+  pg:[
+    ["OUR SCREENS",
+     "Gone Girl. Final Destination. All those stories playing on two different screens while we somehow made it feel like we were sharing the same evening. It's funny how movie nights can become memories even when we weren't sitting in the same room."],
+    ["THE DISCORD NIGHTS",
+     "I love that we can spend time together without needing every second to be special. Sometimes there's a movie, sometimes there's commentary, sometimes we're just there. And honestly, I think that's one of my favourite things about us. I don't just want the exciting moments with you. I like the ordinary ones too."]
+  ],
+  ch:[
+    ["me","Hey, mera pyaara cupcake, would you be up for watching a movie with me tonight, if you're not busy studying or caught up with your series?"],
+    ["her","awwwwwwwww yes yes yes yes yes yes !!!!!"]
+  ],
+  n:"15 August. The last time we watched a movie together. :("
+},
+{
+  id:"s", x:860, y:430, e:"⛈️", t:"The Storm",
+  r:"THE ROUTE · WEATHER WARNING",
+  pg:[
+    ["THE HARD DAYS",
+     "I won't pretend our map has been sunshine all the way through. We've had misunderstandings, difficult conversations, and moments when neither of us seemed to know what to do with everything between us. The bad moments always seem to stick in our minds longer than the good ones. Some of it still hurts me, and I know it hasn't been easy for you either."],
+    ["WHAT I WANT YOU TO KNOW",
+     "I'm not putting this here to remind you of the hurt or to make you feel bad about any of it. I just wanted to be honest about the fact that this has mattered to me, even on the difficult days. I don't expect us to have everything figured out. I'm grateful for the moments we've found our way back to talking, understanding each other a little better, and sharing our little world again."]
+  ],
+  n:"even this is part of the map."
+},
+{
+  id:"q", x:1020, y:715, e:"☕", t:"The Quiet Places",
+  r:"THE DISTANCE · SMALL THINGS", side:1,
+  pg:[
+    ["THE SMALL THINGS",
+     "When I think about you, I don't only think about the big conversations or the emotional moments. I think about the random things we tell each other, the jokes that probably wouldn't make sense to anyone else, and the little bits of our days we choose to share. Those things might seem small, but they're part of what makes you feel like you to me."]
+  ],
+  ls:[
+    "THINGS I WANT TO REMEMBER",
+    [
+      "The random things you tell me that you probably forget five minutes later.",
+      "The ordinary moments when I get to be a part of your day.",
+      "Most importantly, you. But I know I'd have to write a whole lot more to explain that one. 🤍"
+    ]
+  ],
+  n:"I notice more than I say. 🤍"
+},
+{
+  id:"a",
+  x:1110,
+  y:520,
+  e:"✨",
+  t:"Our Little World",
+  r:"THE DISTANCE · A WORLD OF OUR OWN",
+  pg:[
+    ["SOMEWHERE BETWEEN US",
+     "Somewhere between Valsad and Gurgaon, we ended up building a little world of our own. It's made of conversations that lasted longer than planned, random things we wanted to tell each other, movie nights, silly jokes, and moments that probably wouldn't mean much to anyone else. But they mean something to me."],
+    ["A PLACE I'LL REMEMBER",
+     "I don't think you always realise how much the little things stay with me. A conversation, something that made you laugh, a random detail about your day. They all became little pieces of this world. And if there's one thing I wanted this map to show you, it's that the smallest moments with you have often meant the most to me."]
+  ],
+  n:"a little world, made of little things. 🤍"
+},
+{
+  id:"h", x:1400, y:280, e:"🌌", t:"Gurgaon",
+  r:"NORTH · THE HORIZON", ph:0,
+  pg:[
+    ["THE OTHER END OF THE MAP",
+     "And then there's Gurgaon. A place I've never been to, but one that feels important because you're there. It's strange to think that somewhere among all those streets is the person I talk to, miss, laugh with, and wish I could sit beside. One day, I hope this place stops being just a pin on my screen."],
+    ["EVERY SINGLE DAY",
+     "I wish for us every day. I hope we get our first hello in person, our first walk, and our first memories that don't have to live inside a screen. I genuinely hope we get to experience all of that. Sometimes, I catch myself wondering if we'll meet before life takes us in different directions, and the thought scares me because that's the last thing I'd want. For now, I'm just manifesting that we get that chance. I don't know exactly what the road ahead looks like. I just know I'd really like to find out, with you."]
+  ],
+  n:"the map ends here. my hope doesn't. 🤍"
+}
+];
+[
+  [2250,310,"🚶","The First Walk",
+   "Wish I could have this with you. Nowhere in particular, no plan, just walking next to you and finding out how fast you actually walk.",
+   "I know it'll be the best walk for a reason. I'll even get ice cream for us.",
+   "pace: whatever yours is."],
+
+  [560,-120,"📞","The Call, Same Room",
+   "Wish I could have this with you. The late-night calls, but with you actually there. So when you go quiet, I could just sit next to you instead of asking if you're okay.",
+   "",
+   "no screen. just us."],
+
+  [-240,580,"🤍","The First Hug",
+   "Wish I could have this with you. I think about it every day. Not a big moment, just the first time you're really there and I don't have to imagine it.",
+   "",
+   "I'd hold on a second too long."],
+
+  [960,1390,"🚗","The Road Trip",
+   "Wish I could have this with you. Windows down, songs of your choice, and a thousand kilometres finally being something we cover together instead of something between us.",
+   "",
+   "route length: irrelevant."],
+
+  [1850,1250,"🎬","The Same Couch",
+   "Wish I could have this with you. One more movie, except I'd get to see your reactions in person instead of through a voice chat. Titanic, probably. Please say yes.",
+   "",
+   "snacks: at your service."],
+
+  [2400,870,"☀️","A Normal Tuesday",
+   "Wish I could have this with you. Not a trip, not a grand thing. Just an ordinary Tuesday with you somewhere near and nothing planned. This is the one I want most.",
+   "",
+   "ordinary, with you."]
+].forEach(w => P.push({
+  id:"w"+P.length,
+  x:w[0], y:w[1], e:w[2], t:w[3],
+  r:"A WISH · FAR AWAY",
+  w:1,
+  pg:[["WISH I COULD HAVE IT WITH YOU",w[4]]]
+    .concat(w[5] ? [["WHAT I'D DO",w[5]]] : []),
+  n:w[6]
+}));
+
+const FINAL = [
+  "I like you.",
+  "I really, really like you.",
+  "I wish I could hold you close and tell you how much you mean to me.",
+];
+const SPARKS=[[560,470,"Love your elite humor, however bad the jokes but they still bring a smile to my face","😄"],[820,760,"I love talking to you.","💬"],[330,610,"hi, Cupcake 🧁","🧁"],[1250,420,"I wish I can watch a movie with you IRL, I have less hopes but I do wish for it everyday.","🎬"],[160,860,"You are beach to this lonely lost wave","🌊"],[1530,160,"I remember you wanna see lot of lanterns in the sky, wish I could make you experience it.","🏮"],[2150,250,"somewhere out here is the first time I hear you in person. I'll bring tulips and a single sunflower.","🤍"],[470,-170,"the northern lights would look so good here. I'd watch the sky, and you'd catch me watching you.","🌌"],[-320,530,"a lit candle on an unfinished coast. lavender, I think. you'd know which scent is right.","🕯️"],[880,1320,"The emoji is enough to convey what I want to 🥑","🥑"],[1760,1190,"not much into shopping but I'll glady wait for you to bargain and finish your shopping while I adore you”.","🛍️"],[2330,820,"hello from very far away. I'm saving you the last bite of the chocolate waffle.","🧇"],[950,620,"movie time rule: will get coffee, coke, nachos, momos, popcorn(every type except caramel) for you, anything you want will be there for you","🍿"],[400,868,"a stone for you","🪨",1]];
+const LETTER = `Eight months.
+
+Somewhere along these eight months, you became someone I think about every single day. In the random things I see and want to tell you, in the movies I wish I could watch with you, in the little things that remind me of you, and in all the moments when I catch myself wishing you were here.
+
+We've had our share of storms. I won't pretend the hard days didn't hurt, because they did. Sometimes the difficult moments stay in my head longer than I'd like them to, and I know things haven't always been easy for you either. But I'm not keeping score, and I'm not blaming you for any of it. I don't want the difficult parts to erase the good ones, because those good moments mean a lot to me too. And whenever we found our way back to talking, laughing, and being a little more okay again, I was genuinely glad.
+
+I know there are things neither of us has figured out yet, and that's okay. I don't have all the answers either. But I know what's true on my side. I like you. I care about you more than I probably manage to put into words, and I wish for us every single day.
+
+I wish I could be there for the little things. To watch a movie with you without a screen between us, to walk beside you and find out how fast you actually walk, to get you all the snacks you want, and to finally have that beach day where you get to see the sea without looking through my camera. I wish I could experience all those ordinary things with you, because somehow, even the most ordinary things sound special when I imagine them with you.
+
+And yes, I still hope we get to meet. I hope we get to make memories that don't have to stay inside our calls and messages. Sometimes I get scared that life might take us in different directions before we get that chance. I can't pretend that thought doesn't hurt. But I don't want this gift to be about that fear. I'd much rather let it hold the hope I have even though it's tiniest one, even when I don't know how things will turn out.
+
+I think that's what this map means to me. Not that I know where every road leads. Just that, if I could choose, I'd like to see where ours goes. I'd like to meet the person behind all these messages, share a little more of the world with her, and find out what all these little wishes feel like when they finally become real.
+
+Until then, I'll keep the beach saved, the tulips waiting, and the last bite of the chocolate waffle reserved for you. Well, most of it. 🤍
+
+Happy 8 months, my chocolate Cupcake.
+
+I hope you know how much love and thought went into this little world, and I hope some part of it makes you smile the way you so often make me smile.
+
+Happy 8 months. 🤍`;
+
+const SIGN = "— yours, from the west coast";
+/* ========================================= */
+const $=s=>document.querySelector(s),NS="http://www.w3.org/2000/svg",map=$("#map");
+let D="";let sd=11;const R=()=>(sd=sd*16807%2147483647)/2147483647;
+const LAND="M120 640C160 560 300 520 420 540C560 560 640 480 780 470C900 460 960 380 1080 340C1200 300 1300 200 1440 170C1560 150 1640 230 1620 340C1600 440 1500 480 1430 560C1360 640 1300 700 1180 780C1060 860 900 840 780 800C640 760 520 800 420 840C300 890 200 870 150 790C110 740 100 690 120 640Z";
+const RT="M220 735C380 650 420 600 480 600S640 660 700 640S800 450 860 430S1020 560 1110 520S1300 330 1400 280";
+let h=`<defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a1424"/><stop offset="1" stop-color="#1b4352"/></linearGradient>
+<linearGradient id="ld" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7d8a6a"/><stop offset=".6" stop-color="#586d5e"/><stop offset="1" stop-color="#37504d"/></linearGradient>
+<radialGradient id="au"><stop offset="0" stop-color="#7fe8c4" stop-opacity=".5"/><stop offset="1" stop-color="#7fe8c4" stop-opacity="0"/></radialGradient>
+<filter id="gl"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="ro" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence baseFrequency=".02" numOctaves="3" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="26"/></filter>
+<filter id="tx"><feTurbulence baseFrequency=".012 .03" numOctaves="5" seed="9" result="n"/><feDiffuseLighting in="n" lighting-color="#fff" surfaceScale="5"><feDistantLight azimuth="235" elevation="55"/></feDiffuseLighting><feComposite in2="SourceGraphic" operator="in"/><feBlend in2="SourceGraphic" mode="multiply"/></filter>
+<filter id="bl"><feGaussianBlur stdDeviation="16"/></filter>
+<radialGradient id="ob"><stop offset="0" stop-color="#2d4560"/><stop offset="1" stop-color="#0d1826"/></radialGradient>
+<radialGradient id="og"><stop offset="0" stop-color="#fff3c4"/><stop offset="1" stop-color="#d9a94a"/></radialGradient>
+<radialGradient id="cg"><stop offset="0" stop-color="#ffd27a" stop-opacity=".55"/><stop offset="1" stop-color="#ffd27a" stop-opacity="0"/></radialGradient>
+<pattern id="wv" width="90" height="26" patternUnits="userSpaceOnUse"><path d="M0 13q22-9 45 0t45 0" fill="none" stroke="#9fd8e0" opacity=".07"/></pattern>
+<radialGradient id="fg"><stop offset="0" stop-color="#cfe3ee" stop-opacity=".5"/><stop offset="1" stop-color="#cfe3ee" stop-opacity="0"/></radialGradient>
+<clipPath id="lc"><path d="${LAND}"/></clipPath></defs>
+<rect x="-900" y="-600" width="3400" height="2200" fill="url(#sk)"/><rect x="-900" y="-600" width="3400" height="2200" fill="url(#wv)"/><ellipse cx="900" cy="-300" rx="1500" ry="260" fill="url(#au)"/>`;
+for(let i=0;i<170;i++)h+=`<circle cx="${R()*3400-900}" cy="${R()*1500-600}" r="${R()*1.6+.3}" fill="#fff" opacity="${R()*.7+.2}"/>`;
+const BL=[[2150,250,380],[470,-180,300],[-330,520,230],[-600,930,150],[880,1330,400],[1760,1190,270],[-120,1030,90],[1350,1480,80],[2330,820,130],[1150,-330,150],[-260,-300,100]];
+const blob=(cx,cy,r,z)=>{const q=[];for(let i=0;i<10;i++){const a=i/10*6.283,rr=r*(.72+((z*(i+3)*7919)%100)/100*.45);q.push([cx+Math.cos(a)*rr,cy+Math.sin(a)*rr*.8])}let d=`M${(q[0][0]+q[9][0])/2} ${(q[0][1]+q[9][1])/2}`;for(let i=0;i<10;i++){const a=q[i],b=q[(i+1)%10];d+=`Q${a[0]} ${a[1]} ${(a[0]+b[0])/2} ${(a[1]+b[1])/2}`}return d+"Z"};
+const EX=BL.map((l,i)=>{const d=blob(l[0],l[1],l[2],i+2);return `<path d="${d}" fill="none" stroke="#bfeee6" stroke-width="20" opacity=".22"/><path d="${d}" fill="url(#ld)" opacity=".85"/>`}).join("");
+h+=`<g filter="url(#ro)">${EX}<path d="${LAND}" fill="#000" opacity=".45" transform="translate(12 22)" filter="url(#bl)"/><path d="${LAND}" fill="none" stroke="#bfeee6" stroke-width="22" opacity=".25"/><path d="${LAND}" fill="url(#ld)"/></g><g clip-path="url(#lc)" opacity=".9">`;
+for(let i=0;i<120;i++){const x=R()*1600,y=200+R()*700,s=6+R()*10;h+=`<path d="M${x} ${y}l${s} ${s*2.4}h${-2*s}z" fill="${R()>.5?'#2f4a42':'#3c5a4c'}" opacity=".8"/>`}
+for(let i=0;i<14;i++){const x=1000+R()*500,y=240+R()*200,s=30+R()*30;h+=`<path d="M${x} ${y}l${s} ${s*1.4}h${-2*s}z" fill="#8f9a86"/><path d="M${x} ${y}l${s*.35} ${s*.5}l${-s*.2}-6l${-s*.3} 8l${-s*.1}-10z" fill="#e9efe9"/>`}
+h+=`</g><rect x="100" y="150" width="1560" height="760" clip-path="url(#lc)" fill="#fff" filter="url(#tx)" opacity=".18" style="mix-blend-mode:overlay"/>`;
+h+=`<g clip-path="url(#lc)" fill="none" stroke="#fff" stroke-width="1.2" opacity=".09">`+[.96,.91,.86,.8,.73,.65].map(k=>`<path d="${LAND}" transform="translate(${800*(1-k)} ${500*(1-k)}) scale(${k})"/>`).join("")+`</g><ellipse cx="1450" cy="330" rx="200" ry="110" fill="url(#cg)"/>`;
+for(let i=0;i<8;i++)h+=`<rect x="${1360+i*22}" y="${300-(i*37%50)}" width="14" height="${50+(i*37%50)}" fill="#1a2733"/><rect x="${1363+i*22}" y="${306-(i*37%50)}" width="3" height="3" fill="#ffe9a0"/>`;
+BL.forEach((l,i)=>{for(let k=0;k<l[2]/9;k++){const a=R()*6.28,d=Math.sqrt(R())*l[2]*.55,x=l[0]+Math.cos(a)*d,y=l[1]+Math.sin(a)*d*.8,z=5+R()*8;h+=`<path d="M${x} ${y}l${z} ${z*2.4}h${-2*z}z" fill="#2f4a42" opacity=".8"/>`}
+ if(l[2]>200)for(let k=0;k<3;k++)h+=`<circle cx="${l[0]+R()*160-80}" cy="${l[1]+R()*100-50}" r="3.5" fill="#ffd27a" filter="url(#gl)" opacity=".8"/>`;
+ if(i==0)for(let k=0;k<7;k++){const x=l[0]-130+R()*260,y=l[1]-120+R()*60,z=30+R()*30;h+=`<path d="M${x} ${y}l${z} ${z*1.4}h${-2*z}z" fill="#8f9a86"/>`}
+ if(l[2]>140)h+=`<ellipse class="fog" cx="${l[0]}" cy="${l[1]}" rx="${l[2]*1.1}" ry="${l[2]*.8}" fill="url(#fg)"/>`});
+[[2150,255,"THE UNWRITTEN LANDS"],[470,-175,"THE SLEEPLESS COAST"],[-330,525,"THE ISLES OF LATER"],[880,1335,"THE SOUTHERN REACH"],[1760,1195,"WHERE WE'LL GET LOST"]].forEach(t=>D+=`<text class="rg" x="${t[0]}" y="${t[1]}">${t[2]}</text>`);
+[[380,1060,"the sea of waiting"],[1660,560,"strait of almost"],[2330,980,"here be dragons (probably friendly)"],[1000,1030,"the long way round"]].forEach(t=>D+=`<text class="q" x="${t[0]}" y="${t[1]}" opacity=".45" text-anchor="middle">${t[2]}</text>`);
+D+=`<path class="side" d="M300 900C200 1000 260 1200 400 1330"/><path class="side" d="M-60 700C-200 800 -250 900 -450 940"/>`;
+[["M300 900C200 1000 260 1200 400 1330",50],["M-60 700C-200 800 -250 900 -450 940",36]].forEach(l=>D+=`<g><path d="M-14 0h28l-6 10h-16z" fill="#1a2733"/><path d="M0 0v-26l14 20z" fill="#e8dcc0"/><animateMotion dur="${l[1]}s" repeatCount="indefinite" path="${l[0]}"/></g>`);
+D+=`<g transform="translate(-640 1380)" opacity=".7" fill="none" stroke="#e8cf86"><circle r="90"/><circle r="70" stroke-dasharray="3 6"/><path d="M0-130L16 0 0 130-16 0z" fill="#e8cf8633"/><path d="M-130 0L0-16 130 0 0 16z"/><text class="q" y="-146" text-anchor="middle" fill="#e8cf86" stroke="none">N</text></g>`;
+h+=`<path d="M60 900h120M120 880v40" stroke="#e8cf86" opacity=".5"/><text class="q" x="90" y="965" opacity=".6">here, the sea.</text>`;
+h+=`<circle cx="1490" cy="85" r="90" fill="url(#cg)"/><circle cx="1490" cy="85" r="26" fill="#fff6d8" filter="url(#gl)"/>
+<path class="bm" d="M262 838L470 770L480 900Z" fill="#ffe9a0"/><path d="M256 868l6-40h10l6 40z" fill="#e8dcc0"/><path d="M258 842h18v-8h-18z" fill="#c0504d"/><circle cx="267" cy="824" r="5" fill="#fff6c8" filter="url(#gl)"/>
+<g class="bt"><path d="M92 936h46l-8 14h-30z" fill="#1a2733"/><path d="M115 936v-34l22 30z" fill="#e8dcc0"/><circle cx="115" cy="900" r="3" fill="#ffd27a" filter="url(#gl)"/></g>
+<g class="cl"><ellipse cx="300" cy="200" rx="140" ry="22" fill="#fff" opacity=".05"/><ellipse cx="1000" cy="130" rx="180" ry="24" fill="#fff" opacity=".05"/></g>
+<g><ellipse cx="860" cy="360" rx="120" ry="34" fill="#0b121c" opacity=".9"/><ellipse cx="800" cy="372" rx="70" ry="26" fill="#111b28"/><ellipse cx="915" cy="374" rx="75" ry="24" fill="#111b28"/><path class="lt" d="M866 385l-14 34h14l-10 38 30-48h-16l12-24z" fill="#fff6c8" filter="url(#gl)"/>`+Array.from({length:14},(_,i)=>`<path d="M${770+i*9} ${392+i%3*8}l-5 16" stroke="#9fd8e0" opacity=".35"/>`).join("")+`</g>`;
+D+=`<path class="side" d="M220 735Q250 800 330 838"/><path class="side" d="M860 430Q1000 560 1020 715"/><path class="side" d="M1020 715Q1060 620 1110 520"/>`;
+D+=`<path d="${RT}" fill="none" stroke="#e8cf86" stroke-opacity=".16" stroke-width="16" stroke-linecap="round"/><path id="route" d="${RT}" stroke-dasharray="2400" stroke-dashoffset="2400"/><g id="end" opacity="0"><circle r="7" fill="#fff6c8" stroke="#fff6c855" stroke-width="12"><animateMotion dur="14s" repeatCount="indefinite" path="${RT}"/></circle><path d="M1400 280C1450 250 1490 220 1520 195" stroke="#e8cf86" stroke-width="3" stroke-dasharray="14 12" fill="none"/><text class="q" x="1535" y="190" font-size="40">?</text><text class="q" x="1120" y="170">“I don't know where this road goes.”</text><text class="q" x="1160" y="200" fill="#e8cf86">I know where I'd like it to.</text></g>`;
+for(let i=0;i<12;i++)D+=`<circle class="ff" cx="${R()*1600}" cy="${300+R()*600}" r="2.2" style="animation-delay:${-R()*6}s"/>`;
+SPARKS.forEach((s,i)=>D+=`<g class="sp" data-i="${i}"><circle cx="${s[0]}" cy="${s[1]}" r="4"/><text x="${s[0]}" y="${s[1]+6}">${s[3]}</text></g>`);
+P.forEach((p,i)=>D+=`<g class="pin${p.w?' w':''}" data-i="${i}" transform="translate(${p.x} ${p.y})"><circle class="h" r="30"/><circle class="d" r="15"/><text class="e" y="6">${p.e}</text><text y="${p.id=="s"||p.id=="h"||p.id=="f"?-30:42}">${p.t.toUpperCase()}</text></g>`);
+D+=`<path class="bm" d="M262 838L470 770L480 900Z" fill="#ffe9a0"/><path class="lt" d="M866 385l-14 34h14l-10 38 30-48h-16l12-24z" fill="#fff6c8"/><g id="mine"></g>`;
+map.innerHTML=`<defs><radialGradient id="ob"><stop offset="0" stop-color="#2d4560"/><stop offset="1" stop-color="#0d1826"/></radialGradient><radialGradient id="og"><stop offset="0" stop-color="#fff3c4"/><stop offset="1" stop-color="#d9a94a"/></radialGradient></defs><rect x="-900" y="-600" width="3400" height="2200" fill="#0d1b2c"/><image id="bgI" x="-900" y="-600" width="3400" height="2200"/>${D}`;
+(()=>{const SV=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="-900 -600 3400 2200" width="2550" height="1650"><style>.lt{display:none}.bm{display:none}.q{font:italic 22px Georgia,serif;fill:#f3ead6}</style>${h}</svg>`,src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(SV),im=new Image(),bg=$("#bgI");
+ im.onload=()=>{try{const c=document.createElement("canvas");c.width=2550;c.height=1650;c.getContext("2d").drawImage(im,0,0);c.toBlob(b=>bg.setAttribute("href",URL.createObjectURL(b)),"image/webp",.92)}catch(e){bg.setAttribute("href",src)}};im.src=src})();
+const WB=[-900,-600,3400,2200],pc=(x,y,w,h)=>`left:${(x-WB[0])/WB[2]*100}%;top:${(y-WB[1])/WB[3]*100}%;width:${w/WB[2]*100}%;height:${h/WB[3]*100}%`;
+const mm=$("#mm");mm.innerHTML=`<b style="${pc(100,150,1560,760)}"></b>`+BL.map(l=>`<b style="${pc(l[0]-l[2],l[1]-l[2]*.8,l[2]*2,l[2]*1.6)}"></b>`).join("")+P.map(p=>`<u style="${pc(p.x-14,p.y-14,28,28)}"></u>`).join("")+`<i id="vr"></i>`;
+mm.onclick=e=>{const r=mm.getBoundingClientRect();tg.x=WB[0]+(e.clientX-r.left)/r.width*WB[2];tg.y=WB[1]+(e.clientY-r.top)/r.height*WB[3]};
+const fw=()=>1000/Math.max(2200,3400*innerHeight/innerWidth);let K=.07;
+/* camera */
+const cam={x:800,y:500,z:1},tg={x:800,y:500,z:1};let asp=1;
+const fit=()=>{asp=innerWidth/innerHeight;return 1000/Math.max(1000,1600/asp)};
+let lv="";const vr=$("#vr"),f1=n=>n.toFixed(1);function draw(){cam.x+=(tg.x-cam.x)*K;cam.y+=(tg.y-cam.y)*K;cam.z+=(tg.z-cam.z)*K;const hh=1000/cam.z,w=hh*asp,vb=`${f1(cam.x-w/2)} ${f1(cam.y-hh/2)} ${f1(w)} ${f1(hh)}`;if(vb!==lv){lv=vb;map.setAttribute("viewBox",vb);vr.style.cssText=pc(cam.x-w/2,cam.y-hh/2,w,hh)}requestAnimationFrame(draw)}
+const home=()=>{tg.x=800;tg.y=500;tg.z=fit()};home();Object.assign(cam,tg,{z:fw()});draw();$("#wd").onclick=()=>{tg.x=800;tg.y=500;tg.z=fw()};addEventListener("resize",home);$("#home").onclick=home;
+let dn=null,mv=0;
+map.onpointerdown=e=>{dn=[e.clientX,e.clientY];mv=0};
+addEventListener("pointermove",e=>{if(!dn)return;const dx=e.clientX-dn[0],dy=e.clientY-dn[1];mv+=Math.abs(dx)+Math.abs(dy);const k=1000/tg.z/innerHeight;tg.x-=dx*k;tg.y-=dy*k;cam.x=tg.x;cam.y=tg.y;dn=[e.clientX,e.clientY]});
+addEventListener("pointerup",()=>dn=null);
+map.addEventListener("wheel",e=>{e.preventDefault();tg.z=Math.min(4,Math.max(fw(),tg.z*(e.deltaY<0?1.15:.87)))},{passive:false});
+/* ---- tiny him & her ---- */
+const ch=(x,her,c="",a="")=>`<g transform="translate(${x} 56)"><g class="${c}"><ellipse cy="26" rx="10" ry="2.5" fill="#0003"/><rect x="-6.5" y="8" width="13" height="15" rx="6" fill="${her?"#ec8fa5":"#6b8fc0"}"/>${her?'<circle cy="1.5" r="10.4" fill="#4a2c20"/>':""}<circle r="8.6" fill="#f6d8b8"/><path d="${her?"M-8.6-1a8.6 8.6 0 0 1 17.2 0q-8.6-6-17.2 0z":"M-9-1a9 9 0 0 1 18 0q-4-7-9-4t-9 4z"}" fill="${her?"#4a2c20":"#2b1d16"}"/>${her?'<circle cx="7" cy="-7" r="2.2" fill="#ff7f9c"/>':""}<circle cx="-3.2" cy="1.5" r="1.1" fill="#3b2c1c"/><circle cx="3.2" cy="1.5" r="1.1" fill="#3b2c1c"/><path d="M-1.6 4.6q1.6 1.6 3.2 0" stroke="#a5503f" fill="none" stroke-width=".9"/><circle cx="-5.8" cy="4.2" r="1.8" fill="#f4a0a0" opacity=".55"/><circle cx="5.8" cy="4.2" r="1.8" fill="#f4a0a0" opacity=".55"/>${a}</g></g>`;
+const PH='<rect x="-3.5" y="12" width="7" height="10" rx="1.5" fill="#2b3a52"/><rect class="tw" x="-2.5" y="13.2" width="5" height="6.5" rx="1" fill="#ffe9a0"/>';
+const BG=c=>`<rect width="240" height="100" fill="${c}"/>`,G=c=>`<rect y="80" width="240" height="20" fill="${c}"/>`;
+const HT=(x,y,d=0)=>`<text class="hf" x="${x}" y="${y}" font-size="11" style="animation-delay:${d}s">♥</text>`;
+const ST=(n,s)=>Array.from({length:n},(_,i)=>`<circle class="tw" cx="${(i*53+s*17)%236+2}" cy="${(i*29+s*11)%50+4}" r="1" fill="#fff" style="animation-delay:-${i%5*.5}s"/>`).join("");
+const mh=(x,her)=>`<g class="bob"><circle cx="${x}" cy="54" r="7" fill="#f6d8b8"/><path d="M${x-7} 53a7 7 0 0 1 14 0q-7-5-14 0z" fill="${her?"#4a2c20":"#2b1d16"}"/>${her?`<rect x="${x+4}" y="52" width="4" height="11" rx="2" fill="#4a2c20"/>`:""}<circle cx="${x-2.4}" cy="55" r=".9" fill="#3b2c1c"/><circle cx="${x+2.4}" cy="55" r=".9" fill="#3b2c1c"/></g>`;
+const wl=x=>`<g transform="translate(${x} 80)"><g class="rot"><circle r="7" fill="#2b2b36"/><path d="M-5 0H5M0-5V5" stroke="#aaa"/></g></g>`;
+const ARC="M70 40Q120 6 170 40",FLY=`<path d="${ARC}" stroke="#e8cf86" stroke-dasharray="3 5" fill="none"/><text font-size="11" fill="#ff8fa3">♥<animateMotion dur="3.2s" repeatCount="indefinite" path="${ARC}"/></text>`;
+const SC={
+b:()=>BG("#fbe3bd")+G("#a9c78a")+`<circle class="tw" cx="204" cy="22" r="11" fill="#ffcf70"/><path d="M120 82v-12" stroke="#5d8a4a" stroke-width="2"/><path class="gr" d="M120 72q-10-1-10-9q9 0 10 9zM120 72q10-1 10-9q-9 0-10 9z" fill="#78b05c"/>`+ch(62,0,"bob",PH)+ch(178,1,"bob dl",PH)+`<g class="hf"><rect x="52" y="28" width="22" height="14" rx="7" fill="#fff"/><text x="63" y="38" font-size="9" text-anchor="middle" fill="#3b2c1c" font-family="Caveat">hi</text></g>`+HT(178,42,1.6),
+be:()=>BG("#ffe0b8")+`<circle class="tw" cx="204" cy="22" r="12" fill="#ffcf70"/><rect y="50" width="240" height="50" fill="#7fc4d4"/><path class="scr" d="M-40 56${"q10-6 20 0t20 0".repeat(9)}V100H-40z" fill="#9bd6e0" opacity=".8"/><path d="M0 80q60-6 120 0t120 0V100H0z" fill="#f2d9a6"/>`+ch(92,0,"bob")+ch(148,1,"hop dl")+HT(120,50,.5),
+f:()=>BG("#1f3550")+ST(14,1)+G("#2a4a5a")+[[62,0],[62,-1.3],[178,-.6],[178,-1.9]].map(a=>`<circle class="pls" cx="${a[0]}" cy="68" r="16" style="animation-delay:${a[1]}s"/>`).join("")+FLY+ch(62,0,"bob",PH)+ch(178,1,"bob dl",PH),
+c:()=>BG("#2a1c26")+`<path d="M82 42L52 82H188L158 42z" fill="#ffe9a0" opacity=".08"/><rect x="72" y="8" width="96" height="34" rx="3" fill="#ffe9a0" class="fk"/><text x="120" y="30" font-size="13" text-anchor="middle" fill="#8e2f3c" font-family="Caveat">…one more?</text><rect width="22" height="100" fill="#8e2f3c"/><rect x="218" width="22" height="100" fill="#8e2f3c"/>`+G("#3a2535")+ch(92,0,"bob")+ch(148,1,"hop dl")+`<path d="M111 70h18l-3 13h-12z" fill="#e24d4d"/><path d="M114 70l1 13M120 70v13M126 70l-1 13" stroke="#fff" stroke-width="1.5"/><g fill="#fff3c4"><circle class="hop" cx="114" cy="68" r="3"/><circle class="hop dl" cx="120" cy="66" r="3.4"/><circle class="hop" cx="126" cy="68" r="3" style="animation-delay:-.5s"/></g>`,
+s:()=>BG("#34415a")+`<ellipse cx="70" cy="12" rx="50" ry="14" fill="#566280"/><ellipse cx="170" cy="10" rx="56" ry="14" fill="#4a5672"/><path class="lt" d="M118 20l-8 18h8l-6 20 16-26h-9l7-12z" fill="#fff6c8"/>`+Array.from({length:15},(_,i)=>`<path class="rn" d="M${10+i*16} 24v7" stroke="#9fd8e0" stroke-width="1.4" style="animation-delay:-${(i*.37)%.9}s"/>`).join("")+G("#2b3a4a")+`<g class="rb" fill="none" stroke-width="2.5"><path d="M176 82a30 30 0 0 1 60 0" stroke="#ff9aa8"/><path d="M180 82a26 26 0 0 1 52 0" stroke="#ffd27a"/><path d="M184 82a22 22 0 0 1 44 0" stroke="#9fd8e0"/></g>`+ch(102,0,"bob")+ch(138,1,"bob dl")+`<path d="M68 46Q120 4 172 46Q146 38 120 46Q94 38 68 46z" fill="#e8607e"/><path d="M120 46V78" stroke="#3b2c1c" stroke-width="1.6"/>`,
+q:()=>BG("#3a2a22")+`<circle class="tw" cx="34" cy="34" r="26" fill="#ffcf7a" opacity=".22"/><path d="M26 30h16l-3 12h-10z" fill="#ffd27a"/><rect x="33" y="42" width="2" height="38" fill="#7a5a44"/><rect x="190" y="14" width="34" height="30" rx="3" fill="#1a2744" stroke="#e8cf86"/><circle cx="208" cy="28" r="5" fill="#fff6d8"/>`+G("#4a3428")+ch(88,0,"bob")+ch(152,1,"bob dl")+`<rect x="62" y="72" width="116" height="6" rx="3" fill="#a8693f"/><rect x="72" y="78" width="4" height="12" fill="#8a5a38"/><rect x="164" y="78" width="4" height="12" fill="#8a5a38"/><rect x="104" y="65" width="9" height="8" rx="2" fill="#fff4dc"/><rect x="127" y="65" width="9" height="8" rx="2" fill="#fff4dc"/><path class="stm" d="M108 62q-3-4 0-7" stroke="#fff" fill="none"/><path class="stm" d="M131 62q-3-4 0-7" stroke="#fff" fill="none" style="animation-delay:-1.2s"/><text class="hf" x="120" y="46" font-size="10" style="fill:#ffd27a">♪</text>`,
+a:()=>BG("#f6d9c0")+G("#b9d19a")+`<path d="M92 48L120 22L148 48z" fill="#c0504d"/><rect x="98" y="46" width="44" height="36" fill="#f3e6cf"/><rect x="113" y="60" width="14" height="22" rx="7" fill="#8a5a44"/><g class="bob"><circle cx="120" cy="38" r="7" fill="#ffe9a0"/><text x="120" y="42" font-size="11" text-anchor="middle" fill="#7a2e2e" font-family="Caveat">?</text></g>`+ch(62,0,"sw")+ch(178,1,"swr dl")+HT(120,22,.4)+HT(120,22,1.9),
+h:()=>BG("#16233a")+ST(18,3)+`<circle cx="30" cy="22" r="8" fill="#fff6d8"/>`+G("#2d4a46")+[[190,30,18],[206,22,16],[222,38,14],[236,28,10]].map((b,i)=>`<rect x="${b[0]}" y="${b[1]}" width="${b[2]}" height="${82-b[1]}" fill="#0d1826"/><rect class="tw" x="${b[0]+4}" y="${b[1]+6}" width="3" height="3" fill="#ffe9a0" style="animation-delay:-${i*.6}s"/>`).join("")+`<g class="wk">${ch(40,0,"bob")}</g>`+ch(168,1,"",'<path class="wv" d="M6 12q9-2 9-11" stroke="#f6d8b8" stroke-width="3.2" stroke-linecap="round" fill="none"/>')+HT(168,40,.6),
+w8:()=>BG("#bfe3f0")+`<g class="cd"><ellipse cx="60" cy="18" rx="22" ry="6" fill="#fff" opacity=".8"/><ellipse cx="170" cy="28" rx="26" ry="7" fill="#fff" opacity=".8"/></g>`+G("#9bc48a")+`<rect y="86" width="240" height="14" fill="#e8d3a8"/><g class="scr2">`+Array.from({length:7},(_,i)=>`<rect x="${6+i*60}" y="48" width="5" height="32" fill="#8a5a38"/><circle cx="${8.5+i*60}" cy="42" r="15" fill="${i%2?"#6fae6a":"#82bf74"}"/>`).join("")+`</g>`+ch(100,0,"bob")+ch(138,1,"bob dl")+HT(120,40,.3),
+w9:()=>BG("#2b2036")+`<rect x="18" y="12" width="44" height="40" rx="4" fill="#1a2744" stroke="#e8cf86" stroke-width="2"/><circle cx="40" cy="28" r="7" fill="#fff6d8"/><circle class="tw" cx="26" cy="20" r="1" fill="#fff"/><circle class="tw" cx="52" cy="42" r="1" fill="#fff"/><circle class="tw" cx="204" cy="36" r="34" fill="#ffcf7a" opacity=".2"/><path d="M196 30h16l-3 13h-10z" fill="#ffd27a"/><rect x="203" y="43" width="2" height="38" fill="#7a5a44"/>`+G("#3b2a45")+`<ellipse cx="120" cy="84" rx="62" ry="8" fill="#8e5a7a"/>`+ch(110,0,"bob")+ch(134,1,"swr dl")+HT(122,40,.2),
+w10:()=>BG("#fde4e0")+G("#e9c9a9")+`<g class="ml">${ch(111,0,"bob")}</g><g class="mr">${ch(129,1,"bob")}</g><g class="hh">`+[[120,34,16],[104,40,11],[138,42,12],[120,50,9]].map(h=>`<text class="hr" x="${h[0]}" y="${h[1]}" font-size="${h[2]}" text-anchor="middle">♥</text>`).join("")+`</g>`,
+w11:()=>BG("#ffd9a0")+`<circle cx="180" cy="62" r="24" fill="#ffb36b"/><path d="M0 74Q40 50 90 70T200 62T240 70V80H0z" fill="#c98a6b"/><rect y="74" width="240" height="26" fill="#4a4a58"/><path class="scr" d="M-40 90H300" stroke="#ffe9a0" stroke-width="2" stroke-dasharray="20 20"/><g class="bob"><path d="M92 62q6-18 24-18h16q14 0 22 18z" fill="#e8607e"/>`+mh(110,0)+mh(134,1)+`<rect x="82" y="60" width="88" height="20" rx="8" fill="#e8607e"/><rect x="86" y="68" width="80" height="3" fill="#fff" opacity=".3"/>${wl(102)}${wl(152)}</g><text class="hf" x="76" y="50" font-size="10" style="fill:#fff">♪</text><text class="hf" x="170" y="40" font-size="10" style="fill:#fff;animation-delay:-1.6s">♪</text>`,
+w12:()=>BG("#33243a")+`<path d="M90 40L56 80H184L150 40z" fill="#ffe9a0" opacity=".08"/><rect x="82" y="6" width="76" height="32" rx="3" fill="#ffe9a0" class="fk"/><text x="120" y="27" font-size="13" text-anchor="middle" fill="#7a2e2e" font-family="Caveat">gone girl?</text>`+G("#4a3040")+`<rect x="56" y="48" width="128" height="34" rx="11" fill="#9a5b48"/>`+ch(98,0,"bob")+ch(142,1,"hop dl")+`<rect x="60" y="66" width="120" height="16" rx="6" fill="#b46b55"/><rect x="48" y="58" width="16" height="26" rx="7" fill="#9a5b48"/><rect x="176" y="58" width="16" height="26" rx="7" fill="#9a5b48"/><rect x="118" y="60" width="14" height="14" rx="4" fill="#f2a9b8" transform="rotate(-10 125 67)"/>`,
+w13:()=>BG("#fdeccb")+`<rect x="14" y="12" width="46" height="40" rx="4" fill="#bfe3f0" stroke="#fff" stroke-width="3"/><circle class="tw" cx="44" cy="24" r="7" fill="#ffd27a"/><rect x="186" y="10" width="38" height="36" rx="3" fill="#fff"/><rect x="186" y="10" width="38" height="11" rx="3" fill="#e8607e"/><text x="205" y="19" font-size="8" text-anchor="middle" fill="#fff" font-family="Space Mono">TUE</text><text x="205" y="38" font-size="15" text-anchor="middle" class="hr">♥</text>`+G("#e8c9a0")+`<path d="M196 82l-3-14h14l-3 14z" fill="#c0704d"/><g class="sw"><path d="M200 68q-10-6-8-16q8 4 8 16zM200 68q10-6 8-16q-8 4-8 16z" fill="#6fae6a"/></g>`+ch(94,0,"bob",'<rect x="-7" y="14" width="14" height="9" rx="1.5" fill="#fff8e6" stroke="#8a5a38" stroke-width=".8"/><path d="M0 14v9" stroke="#8a5a38" stroke-width=".8"/>')+ch(146,1,"bob dl",'<rect x="-3" y="14" width="7" height="7" rx="2" fill="#fff4dc"/><path class="stm" d="M0 12q-2-3 0-6" stroke="#aaa" fill="none"/>')+HT(120,40,.3)};
+const GS=s=>`<div class="scene g"><svg viewBox="0 0 240 100">${s}</svg></div>`;
+$("#intro .c").insertAdjacentHTML("afterbegin",GS(ST(8,2)+ch(64,0,"bob",PH)+ch(176,1,"bob dl",PH)+FLY.replace(/M70 40Q120 6 170 40/g,"M72 44Q120 6 168 44")));
+$("#done .c").insertAdjacentHTML("afterbegin",GS(ch(96,0,"hop")+ch(144,1,"hop dl")+Array.from({length:16},(_,i)=>`<rect class="rn" x="${8+i*14.5}" y="-4" width="3" height="5" fill="${["#ff9aa8","#ffd27a","#9fd8e0","#c8f0b0"][i%4]}" style="animation-delay:-${(i*.53)%1.8}s;animation-duration:${1.6+i%3*.4}s"/>`).join("")));
+$("#letter .k").insertAdjacentHTML("afterend",`<div class="scene"><svg viewBox="0 0 240 100">${BG("#fbe3bd")+G("#a9c78a")+ch(60,0,"bob")+ch(180,1,"hop")+'<g><rect x="-6" y="-4" width="12" height="8" rx="1" fill="#fff"/><path d="M-6-4L0 1L6-4" stroke="#e8607e" fill="none"/><animateMotion dur="3.6s" repeatCount="indefinite" path="M72 44Q120 8 168 44"/></g>'}</svg></div>`);
+const STN=BG("#ffe0b8")+'<rect y="50" width="240" height="50" fill="#7fc4d4"/><path class="scr" d="M-40 56'+"q10-6 20 0t20 0".repeat(9)+'V100H-40z" fill="#9bd6e0" opacity=".8"/><path d="M0 80q60-6 120 0t120 0V100H0z" fill="#f2d9a6"/>'+ch(76,0,"bob")+ch(164,1,"hop dl")+'<g class="bob"><path d="M106 79q-3-11 8-12q10-3 17 3q5 9-3 9z" fill="#9a9a9a"/><path d="M111 73q6-4 13-2" stroke="#d4d4d4" stroke-width="1.5" fill="none"/></g><text class="tw" x="104" y="62" font-size="9" fill="#fff">✦</text><text class="tw" x="136" y="58" font-size="7" fill="#fff" style="animation-delay:-1s">✦</text>'+HT(120,52,.4);
+$("#stn").innerHTML='<svg viewBox="0 0 240 100">'+STN+'</svg>';$("#sx").onclick=()=>{$("#stone").classList.remove("on");fin(900)};$("#stone").onclick=e=>{if(e.target.id=="stone")$("#sx").onclick()};
+/* ui */
+const seen=new Set(),found=new Set();let T;
+const toast=t=>{const e=$("#t");e.textContent=t;e.classList.add("on");clearTimeout(T);T=setTimeout(()=>e.classList.remove("on"),5500)};
+map.addEventListener("click",e=>{if(mv>8)return;const p=e.target.closest(".pin"),s=e.target.closest(".sp");
+ if(p)open(+p.dataset.i);else if(s){const i=+s.dataset.i;found.add(i);s.style.opacity=.3;s.style.animation="none";$("#spc").textContent=found.size;if(SPARKS[i][4])$("#stone").classList.add("on");else{toast(SPARKS[i][2]);fin(3500)}}});
+let cur=0,pg=0;
+function open(i){cur=i;pg=0;const p=P[i];tg.x=p.x;tg.y=p.y;tg.z=fit()*2.2;setTimeout(()=>{$("#modal").classList.add("on");sheet()},650)}
+function sheet(){const p=P[cur],n=p.pg.length+(p.ls||p.ch?1:0),b=$("#bk");
+ if(b.dataset.c!=cur){b.dataset.c=cur;b.innerHTML=`<div class="k"><span>${String(cur+1).padStart(2,"0")} / 14</span><span>${p.r}</span></div><h2>${p.t}</h2><div class="scene"><svg viewBox="0 0 240 100">${(SC[p.id]||(()=>""))()}</svg></div><div id="pc"></div>`}
+ let s=p.photo&&pg==0?`<div class="pol"><img src="${p.photo}" alt=""><div class="note" style="font-size:20px;margin:4px 0 0">${p.cap||""}</div></div>`:"";
+ if(pg<p.pg.length)s+=`<h3>${p.pg[pg][0]}</h3><p>${p.pg[pg][1]}</p>`;
+ else{if(p.ls)s+=`<h3>${p.ls[0]}</h3><ul>${p.ls[1].map((x,j)=>`<li style="animation-delay:${.4+j*.7}s">${x}</li>`).join("")}</ul>`;
+  if(p.ch)s+=`<h3>A TYPICAL NIGHT</h3>`+p.ch.map((c,j)=>`<div class="bub ${c[0]}" style="animation-delay:${.4+j*.9}s">${c[1]}</div>`).join("")}
+ if(pg==n-1)s+=`<div class="note">${p.n}</div>`;
+ s+=`<div class="nav"><button id="pv" ${pg?"":"disabled"}>←</button><span class="dots">${Array.from({length:n},(_,j)=>`<i class="${j==pg?"a":""}"></i>`).join("")}</span><button id="nx">${pg==n-1?"CLOSE":"→"}</button></div>`;
+ const pc=$("#pc");pc.innerHTML=s;pc.classList.remove("pt");void pc.offsetWidth;pc.classList.add("pt");
+ $("#pv").onclick=()=>{pg--;sheet()};$("#nx").onclick=()=>pg==n-1?close():(pg++,sheet())}
+function close(){$("#modal").classList.remove("on");$("#bk").removeAttribute("data-c");seen.add(cur);document.querySelectorAll(".pin")[cur].classList.add("v");$("#cnt").textContent=seen.size;
+ home();fin(900,1)}
+function fin(d,h){if(seen.size==P.length&&found.size==SPARKS.length){if(!fin.d){fin.d=1;setTimeout(()=>$("#done").classList.add("on"),d)}}else if(h&&seen.size==P.length)setTimeout(()=>toast((SPARKS.length-found.size)+" sparks are still hiding on the map ✨"),1200)}
+$("#modal").onclick=e=>{if(e.target.id=="modal")close()};
+addEventListener("keydown",e=>{if(e.key=="Escape"&&$("#modal").classList.contains("on"))close()});
+/* intro */
+let li=0,ci=0;(function ty(){const el=$("#typed");if(li>=INTRO.length)return;if(ci<=INTRO[li].length){el.innerHTML=INTRO.slice(0,li).join("<br>")+(li?"<br>":"")+INTRO[li].slice(0,ci++);setTimeout(ty,55)}else{li++;ci=0;setTimeout(ty,600)}})();
+$("#go").onclick=()=>{$("#intro").classList.remove("on");K=.016;setTimeout(()=>K=.07,5500);home();const r=$("#route");r.style.transition="stroke-dashoffset 5s ease-in-out";requestAnimationFrame(()=>r.style.strokeDashoffset=0);setTimeout(()=>{r.setAttribute("stroke-dasharray","2 12");r.style.strokeDashoffset=0;r.style.transition="";$("#end").style.cssText="opacity:1;transition:opacity 2s"},5200);aud(1)};
+/* letter */
+$("#mo").innerHTML=MONTHS.map((m,i)=>`<span>MONTH ${i+1}<br>${m}</span>`).join("");
+$("#ol").onclick=()=>{$("#done").classList.remove("on");$("#letter").classList.add("on");const L=LETTER.split("\n\n");$("#lb").innerHTML=L.map((t,i)=>`<p style="animation-delay:${i*1.8}s">${t}</p>`).join("");const g=$("#sg");g.textContent=SIGN;g.style.cssText=`opacity:0;animation:in 2s ${L.length*1.8}s forwards`;$("#fn").innerHTML=FINAL.map((t,i)=>`<div style="animation-delay:${L.length*1.8+3+i*2.6}s">${t}</div>`).join("")};
+$("#lc").onclick=()=>$("#letter").classList.remove("on");
+$("#mk").onclick=()=>{$("#letter").classList.remove("on");$("#mark").classList.add("on");tg.x=1450;tg.y=240;tg.z=fit()*2};
+$("#pl").onclick=()=>{const v=$("#ta").value.trim();if(!v)return;$("#mark").classList.remove("on");$("#mine").innerHTML=`<text class="q" x="1535" y="250" fill="#ff9aa8" font-size="26">♥ ${v.slice(0,60).replace(/</g,"")}</text>`;home();toast("it's on the map now. it's yours.")};
+$("#cp").onclick=()=>{const v=$("#ta").value;(navigator.clipboard?navigator.clipboard.writeText("My mark on the road: "+v):Promise.reject()).then(()=>toast("copied. paste it to me whenever you're ready."),()=>toast("select the text and copy it, then send it to me 🤍"))};
+/* sound */
+let ac,on=0;function aud(a){if(on&&!a){on=0;ac.suspend();$("#snd").textContent="♪ SOUND";return}
+ try{if(!ac){ac=new AudioContext();const f=ac.createBiquadFilter();f.frequency.value=700;const g=ac.createGain();g.gain.value=.05;f.connect(g);g.connect(ac.destination);[110,164.8,220,277.2].forEach((q,i)=>{const o=ac.createOscillator();o.frequency.value=q;o.detune.value=i*4;o.connect(f);o.start()})}ac.resume();on=1;$("#snd").textContent="♪ ON"}catch(e){}}
+$("#snd").onclick=()=>aud(0);
+</script></body></html>
